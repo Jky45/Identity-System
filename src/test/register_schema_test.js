@@ -1,5 +1,5 @@
 const hre = require("hardhat");
-const { getSchemaRegistryContract } = require("./contracts.js"); // Asegúrate de que la ruta sea correcta
+const { getSchemaRegistryContract } = require("../utils/contracts.js"); // Asegúrate de que la ruta sea correcta
 
 async function main() {
     console.log("\n🔍 Obteniendo instancia del contrato SchemaRegistry...");

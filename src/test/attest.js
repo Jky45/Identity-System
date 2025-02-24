@@ -1,6 +1,6 @@
 const hre = require("hardhat");
 const { AbiCoder } = hre.ethers; // Importar AbiCoder desde ethers
-const { getEASContract, getSchemaRegistryContract } = require("./contracts");
+const { getEASContract, getSchemaRegistryContract } = require("../utils/contracts.js");
 
 async function main() {
   const easContract = await getEASContract(); // Obtén el contrato EAS

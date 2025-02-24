@@ -1,11 +1,11 @@
 const hre = require("hardhat");
-const { getSchemaRegistryContract } = require("./contracts");
+const { getSchemaRegistryContract } = require("../utils/contracts.js");
 
 async function main() {
     const schemaRegistryContract = await getSchemaRegistryContract();
 
     // Extraer el UID del esquema del log
-    const schemaUID = `0x0000000000000000000000000000000000000000000000000000000000000020`; // Solo los primeros 64 caracteres
+    const schemaUID = `0x3886a3423426bd173ac652cc1d44e8438fbc226fb7facb6164c90b2ec69333ca`; // Solo los primeros 64 caracteres
 
     // Verificar si el esquema está registrado en el contrato
     const schemaRecord = await schemaRegistryContract.getSchema(schemaUID);

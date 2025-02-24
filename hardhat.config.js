@@ -9,8 +9,8 @@ module.exports = {
       url: "http://127.0.0.1:7545", // Dirección RPC de Ganache
       accounts: [
         // Llaves privadas de las cuentas de Ganache
-        "0x5408ab174fa99fb23fd00b672b34108190c6ce607c2b4911942bd41cfe14e3e9",
-        "0x5758b0634e4a242701a58bb35ec5f9e6717de8837680e35def5ab955fb85f426",
+        "0xc86fdc2ae87717a37b9321922100960055afb30d1c5f95dfd4a604c8d70e2a7b",
+        "0xfc3dcf8c0423cbc4729211561b5568f0a3d5f7e7d1f7c3b77a884eeee85aed03",
       ],
     },}
     

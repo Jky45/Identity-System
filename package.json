@@ -28,6 +28,8 @@
     "@veramo/kms-local": "^6.0.0",
     "@veramo/kms-web3": "^6.0.0",
     "ethr-did-resolver": "^11.0.3",
+    "express": "^4.21.2",
+    "ipfs-http-client": "^60.0.1",
     "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20"
   }

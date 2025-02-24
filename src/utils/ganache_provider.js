@@ -19,7 +19,7 @@ async function createGanacheProvider() {
   console.log("✅ Cuentas disponibles en Ganache:", accounts);
 
   // Usar la primera cuenta como deployer
-  const deployer = new ethers.Wallet("0x5408ab174fa99fb23fd00b672b34108190c6ce607c2b4911942bd41cfe14e3e9", provider);
+  const deployer = new ethers.Wallet("0xc86fdc2ae87717a37b9321922100960055afb30d1c5f95dfd4a604c8d70e2a7b", provider);
 
   console.log("📜 Desplegando contrato desde la cuenta:", deployer.address);
 
