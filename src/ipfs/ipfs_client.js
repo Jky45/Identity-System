@@ -1,6 +1,6 @@
 async function getIpfsClient() {
     const { create } = await import("ipfs-http-client");
-    return create({ url: "http://127.0.0.1:5001" });
+    return create({ url: "http://127.0.0.1:5001/api/v0" });
   }
   
   async function uploadToIPFS(data) {

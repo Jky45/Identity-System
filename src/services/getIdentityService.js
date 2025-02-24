@@ -1,7 +1,7 @@
 const { getAgent } = require("../veramo/agent.js");
 const { getFromIPFS } = require("../ipfs/ipfs_client");
 const hre = require("hardhat");
-const { CONTRACT_ADDRESSES } = require("../config.js");
+const { CONTRACT_ADDRESSES } = require("../../config.js");
 
 const getIdentity = async (req, res) => {
     try {
@@ -16,13 +16,9 @@ const getIdentity = async (req, res) => {
         const agent = getAgent();
 
         // **Resolver el DID basado en el alias (address)**
-        const identifiers = await agent.didManagerFind({ alias: address });
+        const identifier = await agent.didManagerGetByAlias({ alias: address });
 
-        if (identifiers.length === 0) {
-            return res.status(404).json({ error: "No se encontró un DID para esta dirección." });
-        }
-
-        const did = identifiers[0].did;
+        const did = identifier.did;
         console.log(`✅ DID Resuelto: ${did}`);
 
         // **Conectar a Ganache**
@@ -40,15 +36,16 @@ const getIdentity = async (req, res) => {
         const IdentityRegistry = await hre.ethers.getContractFactory("IdentityRegistry", wallet);
         const contract = IdentityRegistry.attach(CONTRACT_ADDRESSES.IDENTITY_REGISTRY);
 
-        // **Buscar en el contrato el hash de IPFS**
+        // **Buscar en el contrato el hash de IPFS y la ID de atestación**
         console.log("🔍 Buscando metadata en el contrato...");
-        const metadataHash = await contract.getIdentity(did);
+        const [metadataHash, attestationId] = await contract.getIdentity(did);
 
-        if (!metadataHash) {
-            return res.status(404).json({ error: "No se encontró metadata para este DID." });
+        if (!metadataHash || metadataHash === "0x") {
+            return res.status(404).json({ error: "No se encontró metadata para este DID en el contrato." });
         }
 
         console.log(`✅ Hash de IPFS encontrado: ${metadataHash}`);
+        console.log(`✅ Attestation ID encontrado: ${attestationId}`);
 
         // **Recuperar datos desde IPFS**
         console.log("🔽 Recuperando datos desde IPFS...");
@@ -57,8 +54,9 @@ const getIdentity = async (req, res) => {
 
         return res.status(200).json({
             did,
-            metadata: JSON.parse(metadata),
+            metadata: metadata,
             ipfsHash: metadataHash,
+            attestationId
         });
 
     } catch (error) {

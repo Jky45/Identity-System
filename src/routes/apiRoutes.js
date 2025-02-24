@@ -9,7 +9,7 @@ const router = express.Router();
 // Definir las rutas con funciones de callback correctas
 router.post("/register", registerIdentity);
 router.post("/attest", createAttestation);
-router.get("/get-identity", getIdentity);
+router.get("/get-identity/:address", getIdentity);
 router.post("/authenticate", authenticate);
 
 module.exports = router;
