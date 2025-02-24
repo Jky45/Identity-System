@@ -9,10 +9,10 @@ const PORT = 3000;
 // Middleware JSON
 app.use(express.json());
 
-// Variables para exportar
-let agent;
+// Variables globales
 let provider;
 let registry;
+let agentReady = null; // Promise para asegurar que `agent` está listo
 
 // Función para inicializar el servidor
 const startServer = async () => {
@@ -22,8 +22,7 @@ const startServer = async () => {
         console.log("✅ Ganache Provider listo.");
 
         console.log("🚀 Inicializando Veramo...");
-        await setup(provider, registry); 
-        agent = getAgent();
+        agentReady = setup(provider, registry).then(() => getAgent());
         console.log("✅ Veramo configurado correctamente.");
 
         // Usar rutas unificadas
@@ -39,8 +38,16 @@ const startServer = async () => {
     }
 };
 
+// Función para obtener `agent` asegurando que ya está inicializado
+async function getAgentInstance() {
+    if (!agentReady) {
+        throw new Error("🚨 El servidor aún no ha inicializado Veramo.");
+    }
+    return await agentReady; // 🔥 Retorna la promesa que contiene `agent`
+}
+
 // Ejecutar inicialización del servidor
 startServer();
 
-// Exportar variables para uso en servicios
-module.exports = { agent, provider, registry };
+// ✅ Exportación corregida
+module.exports = { agentReady, provider, registry };

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 // Uncomment this line to use console.log
@@ -40,31 +40,22 @@ pragma solidity ^0.8.28;
 
 
 
-contract Lock {
+
+contract IdentityRegistry {
     struct Identity {
-        string did;            // DID del usuario
         string metadataHash;   // Hash IPFS de los metadatos
-        bool verified;         // Estado de verificación
+        string attestationId;  // ID de atestación
     }
 
     mapping(string => Identity) private identities; // Mapeo de DID a Identidad
-    mapping(address => string) private ownerToDID;  // Relación de address a DID
     address public admin;                           // Dirección del administrador
 
-    event IdentityRegistered(string did, string metadataHash, address owner);
+    event IdentityRegistered(string did, string metadataHash);
     event IdentityUpdated(string did, string newMetadataHash);
-    event IdentityVerified(string did);
+    event IdentityAttested(string did, string attestationId);
 
     modifier onlyAdmin() {
-        require(msg.sender == admin, "not Admin");
-        _;
-    }
-
-    modifier onlyOwner(string memory did) {
-        require(
-            keccak256(abi.encodePacked(ownerToDID[msg.sender])) == keccak256(abi.encodePacked(did)),
-            "No eres el propietario de este DID"
-        );
+        require(msg.sender == admin, "Not Admin");
         _;
     }
 
@@ -72,41 +63,38 @@ contract Lock {
         admin = msg.sender; // El despliegue asigna al admin inicial
     }
 
-    function registerIdentity(string memory did, string memory metadataHash) public {
-        // require(bytes(identities[did].did).length == 0, "DID ya registrado");
-        // require(bytes(ownerToDID[msg.sender]).length == 0, "Ya tienes un DID registrado");
+    function registerIdentity(string memory did, string memory metadataHash) public onlyAdmin {
+        require(bytes(identities[did].metadataHash).length == 0, "DID ya registrado");
 
         identities[did] = Identity({
-            did: did,
             metadataHash: metadataHash,
-            verified: false
+            attestationId: ""
         });
 
-        ownerToDID[msg.sender] = did;
-
-        emit IdentityRegistered(did, metadataHash, msg.sender);
+        emit IdentityRegistered(did, metadataHash);
     }
 
-    function updateMetadata(string memory did, string memory newMetadataHash) public onlyOwner(did) {
-        require(bytes(identities[did].did).length > 0, "DID no registrado");
+    function updateMetadata(string memory did, string memory newMetadataHash) public onlyAdmin {
+        require(bytes(identities[did].metadataHash).length > 0, "DID no registrado");
 
         identities[did].metadataHash = newMetadataHash;
 
         emit IdentityUpdated(did, newMetadataHash);
     }
 
-    function verifyIdentity(string memory did) public onlyAdmin {
-        require(bytes(identities[did].did).length > 0, "DID no registrado");
+    function attestIdentity(string memory did, string memory attestationId) public onlyAdmin {
+        require(bytes(identities[did].metadataHash).length > 0, "DID no registrado");
 
-        identities[did].verified = true;
+        identities[did].attestationId = attestationId;
 
-        emit IdentityVerified(did);
+        emit IdentityAttested(did, attestationId);
     }
 
-    function getIdentity(string memory did) public view returns (string memory, string memory, bool) {
-        require(bytes(identities[did].did).length > 0, "DID no registrado");
+    function getIdentity(string memory did) public view returns (string memory, string memory) {
+        require(bytes(identities[did].metadataHash).length > 0, "DID no registrado");
 
         Identity memory identity = identities[did];
-        return (identity.did, identity.metadataHash, identity.verified);
+        return (identity.metadataHash, identity.attestationId);
     }
 }
+
