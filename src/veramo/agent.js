@@ -1,8 +1,6 @@
 let agent;
 
-async function setup(options) {
-  console.log("🔄 Inicializando Ganache Provider...");
-
+async function setup(provider, registry) {
   // Importaciones dinámicas
   const { createAgent } = await import("@veramo/core");
   const { CredentialPlugin } = await import("@veramo/credential-w3c");
@@ -11,9 +9,6 @@ async function setup(options) {
   const { getResolver } = await import("ethr-did-resolver");
   const { EthrDIDProvider } = await import("@veramo/did-provider-ethr");
   const { getDidKeyResolver } = await import("@veramo/did-provider-key");
-  const { createGanacheProvider } = await import(
-    "../utils/ganache_provider.js"
-  );
   const { KeyManager } = await import("@veramo/key-manager");
   const { KeyManagementSystem, SecretBox } = await import("@veramo/kms-local");
   const { Web3KeyManagementSystem } = await import("@veramo/kms-web3");
@@ -31,15 +26,10 @@ async function setup(options) {
     DataStoreDiscoveryProvider,
   } = await import("@veramo/data-store");
 
-  const { ethers } = await import("ethers");
   const databaseFile = "./database.sqlite";
 
-  // Conectar a Ganache
-  const { provider, registry } = await createGanacheProvider();
-  console.log("✅ Ganache Provider listo.");
-
   const dbConnection = new DataSource({
-    name: (options && options.context && options.context["dbName"]) || "test",
+    name: "database",
     type: "sqlite",
     database: databaseFile,
     synchronize: false,
