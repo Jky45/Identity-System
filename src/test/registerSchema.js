@@ -22,7 +22,7 @@ async function main() {
     // 🟢 REGISTRAR UN NUEVO ESQUEMA
     // =============================
 
-    const schema = "string did, string university, bool valid";
+    const schema = "string vchash";
     const resolver = hre.ethers.ZeroAddress;
     const isRevocable = true;
 

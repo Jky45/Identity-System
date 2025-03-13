@@ -51,3 +51,6 @@ startServer();
 
 // ✅ Exportación corregida
 module.exports = { agentReady, provider, registry };
+
+
+
